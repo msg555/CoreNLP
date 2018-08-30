@@ -54,7 +54,7 @@ public class StanfordCoreNLPServer implements Runnable {
   @ArgumentParser.Option(name="server_id", gloss="a name for this server")
   protected String serverID = null; // currently not used
   @ArgumentParser.Option(name="port", gloss="The port to run the server on")
-  protected int serverPort = 9000;
+  protected int serverPort = 25900;
   @ArgumentParser.Option(name="status_port", gloss="The port to serve the status check endpoints on. If different from the server port, this will run in a separate thread.")
   protected int statusPort = serverPort;
   @ArgumentParser.Option(name="uriContext", gloss="The URI context")
@@ -179,14 +179,17 @@ public class StanfordCoreNLPServer implements Runnable {
       log("http://stanfordnlp.github.io/CoreNLP/download.html");
     }
     this.defaultProps = PropertiesUtils.asProperties(
-        "annotators", defaultAnnotators,  // Run these annotators by default
-        "coref.mention.type", "dep",  // Use dependency trees with coref by default
-        "coref.mode", "statistical",  // Use the new coref
-        "coref.language", "en",  // We're English by default
-        "inputFormat", "text",   // By default, treat the POST data like text
-        "outputFormat", "json",  // By default, return in JSON -- this is a server, after all.
+        "annotators", "tokenize, ssplit, pos, lemma, ner",
+        "ner.combinationMode", "HIGH_RECALL",
+        "ner.useSUTime", "True",
+        "sutime.searchForDocDate", "True",
+        "sutime.includeRange", "True",
+        "sutime.markTimeRanges", "True",
+        "sutime.teRelHeurLevel", "MORE",
+        "inputFormat", "text",
+        "outputFormat", "text",
         "prettyPrint", "false",  // Don't bother pretty-printing
-        "parse.model", defaultParserPath,  // SR scales linearly with sentence length. Good for a server!
+        "parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz",  // SR scales linearly with sentence length. Good for a server!
         "parse.binaryTrees", "true",  // needed for the Sentiment annotator
         "openie.strip_entailments", "true");  // these are large to serialize, so ignore them
 
